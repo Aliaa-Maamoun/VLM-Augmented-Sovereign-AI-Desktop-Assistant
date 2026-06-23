@@ -1,0 +1,36 @@
+void setup() {
+  Serial.begin(115200);
+  delay(2000); // Wait for Serial Monitor to open
+
+  Serial.println("--- Team 14: MCU Verification ---");
+
+  // 1. Verify Flash Memory
+  uint32_t flashSize = ESP.getFlashChipSize();
+  Serial.print("Flash Chip Size: ");
+  Serial.print(flashSize / (1024 * 1024)); 
+  Serial.println(" MB");
+
+  // 2. Verify PSRAM (The core requirement for VLMs)
+  if (psramInit()) {
+    Serial.println("PSRAM Initialization: SUCCESS");
+    
+    size_t totalPsram = ESP.getPsramSize();
+    size_t freePsram = ESP.getFreePsram();
+
+    Serial.print("Total PSRAM: ");
+    Serial.print(totalPsram / 1024);
+    Serial.println(" KB");
+
+    Serial.print("Free PSRAM: ");
+    Serial.print(freePsram / 1024);
+    Serial.println(" KB");
+  } else {
+    Serial.println("PSRAM Initialization: FAILED!");
+    Serial.println("Check Tools > PSRAM settings (should be OPI).");
+  }
+}
+
+void loop() {
+  // Idle state (Ref: sense_ble_airwriting.pdf)
+  delay(1000); 
+}
